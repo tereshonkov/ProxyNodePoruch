@@ -1,0 +1,176 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Users {
+  id                        Int           @id @default(autoincrement())
+  username                  String        @unique
+  email                     String        @unique
+  password                  String
+  full_name                 String
+  phone                     String
+  bio                       String
+  location                  String
+  social_links              String
+  document_photo_url        String
+  social_network_link       String
+  email_verified            Boolean       @default(false)
+  admin_approved            Boolean       @default(false)
+  application_status        String        @default("pending")
+  rejection_reason          String
+  email_verification_code   String
+  password_reset_code       String
+  verification_code_expires DateTime
+  vehicle_type              String
+  vehicle_make              String
+  vehicle_model             String
+  license_plate             String
+  driver_license_number     String
+  driver_license_expiry     DateTime
+  vehicle_capacity          Int
+  availability_hours        String
+  availability_days         String
+  special_certifications    String
+  roles                     UserRoles[]
+  requests                  Requests[]
+  volonteer                 Collections[]
+  campagins                 Campagins[]
+  drivers                   Deliveries[] @relation("DriverDeliveries")
+  requesters                Deliveries[] @relation("RequesterDeliveries")
+  created_at                DateTime      @default(now())
+  updated_at                DateTime      @updatedAt
+}
+
+model Roles {
+  id         Int         @id @default(autoincrement())
+  name       String      @unique
+  users      UserRoles[]
+  created_at DateTime    @default(now())
+  updated_at DateTime    @updatedAt
+}
+
+model UserRoles {
+  user_id     Int
+  role_id     Int
+  assigned_at DateTime @default(now())
+  users       Users    @relation(fields: [user_id], references: [id])
+  roles       Roles    @relation(fields: [role_id], references: [id])
+
+  @@id([user_id, role_id])
+}
+
+model Requests {
+  id            Int      @id @default(autoincrement())
+  owner_id      Int
+  owners        Users    @relation(fields: [owner_id], references: [id], onDelete: Restrict)
+  title         String
+  description   String
+  city          String
+  urgency       String   @default("low")
+  request_type  String   @default("things")
+  status        String   @default("pending")
+  admin_comment String
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+}
+
+model Collections {
+  id            Int      @id @default(autoincrement())
+  volonteer_id  Int
+  volonteers    Users    @relation(fields: [volonteer_id], references: [id], onDelete: Restrict)
+  name          String
+  priority      String   @default("low")
+  city          String
+  help_type     String   @default("things")
+  description   String
+  status        String   @default("pending")
+  admin_comment String
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+}
+
+model Campagins {
+  id            Int      @id @default(autoincrement())
+  title         String
+  description   String
+  city          String
+  aid_type      String   @default("things")
+  priority      String   @default("low")
+  status        String   @default("pending")
+  created_by    Int
+  creators      Users    @relation(fields: [created_by], references: [id], onDelete: Restrict)
+  admin_comment String
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+}
+
+model Deliveries {
+  id                   Int      @id @default(autoincrement())
+  title                String
+  description          String
+  pickup_location      String
+  delivery_location    String
+  urgency              String   @default("low")
+  status               String   @default("pending")
+  driver_id            Int
+  drivers              Users    @relation("DriverDeliveries", fields: [driver_id], references: [id], onDelete: Restrict)
+  requester_id         Int
+  requesters           Users    @relation("RequesterDeliveries", fields: [requester_id], references: [id], onDelete: Restrict)
+  cargo_type           String   @default("things")
+  cargo_weight         Int
+  special_requirements String
+  contact_phone        String
+  estimated_distance   Int
+  estimated_duration   Int
+  route_coordinates    String
+  created_at           DateTime @default(now())
+  updated_at           DateTime @updatedAt
+  assigned_at          DateTime
+  completed_at         DateTime
+}
+
+enum Application_Status {
+  pending
+  approved
+  rejected
+}
+
+enum Request_Status {
+  draft
+  pending
+  published
+  rejected
+  archived
+}
+
+enum Collection_Status {
+  pending
+  published
+  rejected
+  approved
+  in_progress
+  in_transit
+  completed
+  closed
+}
+
+enum Delivery_Status {
+  available
+  assigned
+  in_progress
+  completed
+  cancelled
+}
+
+enum Roles_User {
+  volunteer
+  donor
+  recipient
+  driver
+  admin
+}

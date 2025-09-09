@@ -1,0 +1,33 @@
+{
+  "name": "poruchbe",
+  "version": "1.0.0",
+  "description": "This is a layout for a Node.js project using TypeScript and Express.",
+  "main": "server.ts",
+  "scripts": {
+    "dev": "nodemon --watch 'src/**/*.ts' --exec ts-node src/server.ts",
+    "build": "npx prisma generate && tsc",
+    "start": "node dist/server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "^6.15.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.2",
+    "express": "^5.1.0",
+    "nodemon": "^3.1.10",
+    "prisma": "^6.15.0",
+    "undici": "^7.15.0"
+  },
+  "devDependencies": {
+    "@types/cookie-parser": "^1.4.9",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.3.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2"
+  },
+  "type": "commonjs"
+}
